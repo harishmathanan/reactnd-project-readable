@@ -24,3 +24,11 @@ Additional dependencies are as below:
 4. `cd react ui` then `npm install`.
 5. Start the application by executing `npm start`.
 6. Navigate to `http:localhost:3000`
+
+## screenshots
+
+![Page View](https://imgur.com/MoWpRDr)
+
+![Form View](https://imgur.com/eucZzSY)
+
+![Mobile View](https://imgur.com/2XGw16d)
