@@ -27,8 +27,8 @@ Additional dependencies are as below:
 
 ## screenshots
 
-![Page View](https://imgur.com/MoWpRDr)
+![Page View](https://i.imgur.com/MoWpRDr.png)
 
-![Form View](https://imgur.com/eucZzSY)
+![Form View](https://i.imgur.com/eucZzSY.png)
 
-![Mobile View](https://imgur.com/2XGw16d)
+![Mobile View](https://i.imgur.com/2XGw16d.png)
