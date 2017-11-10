@@ -15,10 +15,10 @@ export const generateRandom = () => {
  * @param {timestamp} Valid JavaScript Timestamp
  */
 export const dateFormatter = (timestamp) => {
-  let convertDate = new Date(timestamp).toString();
-  let splitDate = convertDate.split(' ');
+  const convertDate = new Date(timestamp).toString();
+  const splitDate = convertDate.split(' ');
 
-  let formatDate = splitDate[2] + ' ' + monthInFull(splitDate[1]) + ' ' + splitDate[3];
+  const formatDate = splitDate[2] + ' ' + monthInFull(splitDate[1]) + ' ' + splitDate[3];
   return formatDate;
 };
 

@@ -9,7 +9,7 @@ const PostContent = (props) => {
           ? props.body.substring(0, 120)
           : props.body
         }
-        ...<a href={"/post/" + props.id}>read more</a>
+        ...<a href={`/${props.id}`}>read more</a>
       </div>
     );
   }

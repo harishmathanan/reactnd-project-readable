@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import PostMeta from './postMeta';
-import PostVotes from './postVotes';
 import PostHeader from './postHeader';
 import PostContent from './postContent';
+import PostActions from './postActions';
 
 const PostDisplay = (props) => {
   return (
@@ -19,9 +19,9 @@ const PostDisplay = (props) => {
         category={props.post.category}
       />
 
-      <PostVotes
+      <PostActions
         id={props.post.id}
-        voteScore={props.post.voteScore}
+        votes={props.post.voteScore}
         voteHandler={props.voteHandler}
       />
 

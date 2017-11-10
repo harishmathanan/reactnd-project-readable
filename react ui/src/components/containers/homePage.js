@@ -7,7 +7,7 @@ import ProgressStatus from '../shared/progressStatus';
 import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { getPostList, votePostItem } from '../../actions/postActions';
+import { getAllPosts, votePost } from '../../actions/postActions';
 
 class HomePage extends React.Component {
   constructor() {
@@ -18,9 +18,41 @@ class HomePage extends React.Component {
       posts: []
     };
 
-    this.onPostVote = this.onPostVote.bind(this);
+    this.onVoteClick = this.onVoteClick.bind(this);
     this.onSortChange = this.onSortChange.bind(this);
     this.sortByDescending = this.sortByDescending.bind(this);
+  }
+
+  componentDidMount() {
+    this.props.getPosts();
+  }
+
+  componentWillReceiveProps(newProps) {
+    if (newProps.posts !== this.props.posts) {
+
+      const sortedPosts = this.sortByDescending(newProps.posts, this.state.sortBy);
+      this.setState({ posts: sortedPosts });
+    }
+  }
+
+  onVoteClick(postId, voteValue) {
+    const voteOption = { option: voteValue };
+    this.props.votePost(postId, voteOption);
+  }
+
+  onSortChange(e) {
+    e.preventDefault();
+
+    const sortValue = e.target.value;
+    const sortedPosts = this.sortByDescending(this.state.posts, sortValue);
+
+    this.setState({ posts: sortedPosts, sortBy: sortValue });
+  }
+
+  sortByDescending(array, propertyName) {
+    return array.sort((x, y) => {
+      return y[propertyName] - x[propertyName];
+    });
   }
 
   render() {
@@ -45,7 +77,7 @@ class HomePage extends React.Component {
           </select>
 
           <NavLink
-            to={'/post/create'}
+            to={'/new'}
             className="lnk lnk-primary">
             Create
           </NavLink>
@@ -56,48 +88,12 @@ class HomePage extends React.Component {
             <PostDisplay
               key={post.id}
               post={post}
-              voteHandler={this.onPostVote}
+              voteHandler={this.onVoteClick}
             />
           );
         })}
       </div>
     );
-  }
-
-  componentDidMount() {
-    // this line is important, it is used
-    // to let the component know that an action
-    // from a different route has already been dispatched.
-    if (this.props.isFetching) { return; }
-
-    this.props.getPosts();
-  }
-
-  componentWillReceiveProps(newProps) {
-    if (!newProps.posts) { return; }
-
-    const sortedPosts = this.sortByDescending(newProps.posts, this.state.sortBy);
-    this.setState({ posts: sortedPosts });
-  }
-
-  onPostVote(postId, voteValue) {
-    const voteOption = { option: voteValue };
-    this.props.votePost(postId, voteOption);
-  }
-
-  onSortChange(e) {
-    e.preventDefault();
-
-    const sortValue = e.target.value;
-    const sortedPosts = this.sortByDescending(this.state.posts, sortValue);
-
-    this.setState({ posts: sortedPosts, sortBy: sortValue });
-  }
-
-  sortByDescending(array, propertyName) {
-    return array.sort((x, y) => {
-      return y[propertyName] - x[propertyName];
-    });
   }
 }
 
@@ -121,8 +117,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getPosts: bindActionCreators(getPostList, dispatch),
-    votePost: bindActionCreators(votePostItem, dispatch)
+    getPosts: bindActionCreators(getAllPosts, dispatch),
+    votePost: bindActionCreators(votePost, dispatch)
   };
 };
 

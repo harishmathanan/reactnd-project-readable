@@ -1,46 +1,141 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Modal from 'react-modal';
 import PostDetail from '../post/postDetail';
+import CommentForm from '../comment/commentForm';
 import ErrorStatus from '../shared/errorStatus';
 import ProgressStatus from '../shared/progressStatus';
-import CommentForm from '../comment/commentForm';
-import CommentDisplay from '../comment/commentDisplay';
 import FaComments from 'react-icons/lib/fa/comments';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { generateRandom } from '../../common/helpers';
+import { getPost, votePost } from '../../actions/postActions';
 import {
-  getPostItem,
-  votePostItem,
-  deletePostItem
-} from '../../actions/postActions';
-import {
-  getCommentList,
-  voteCommentItem,
-  createCommentItem,
-  updateCommentItem,
-  deleteCommentItem
+  getAllComments,
+  voteComment,
+  createComment,
+  updateComment,
+  deleteComment
 } from '../../actions/commentActions';
+
+import { dateFormatter, generateRandom } from '../../common/helpers';
+import FaTrash from 'react-icons/lib/fa/trash';
+import FaPencil from 'react-icons/lib/fa/pencil';
+import FaThumbsUp from 'react-icons/lib/fa/thumbs-up';
+import FaThumbsDown from 'react-icons/lib/fa/thumbs-down';
+
 
 class PostPage extends React.Component {
   constructor() {
     super();
 
     this.state = {
-      isAddComment: false
+      isCreate: false,
+      isUpdate: false,
+      isDelete: false,
+      comment: {}
     };
 
-    this.onPostVote = this.onPostVote.bind(this);
-    this.onPostEdit = this.onPostEdit.bind(this);
-    this.onPostDelete = this.onPostDelete.bind(this);
+    this.onPostVoteClick = this.onPostVoteClick.bind(this);
+    this.onPostCancelClick = this.onPostCancelClick.bind(this);
 
-    this.onCommentCreate = this.onCommentCreate.bind(this);
-    this.toggleAddComment = this.toggleAddComment.bind(this);
+    this.onCommentVoteClick = this.onCommentVoteClick.bind(this);
+    this.onCommentCreateClick = this.onCommentCreateClick.bind(this);
+    this.onCommentUpdateClick = this.onCommentUpdateClick.bind(this);
+    this.onCommentDeleteClick = this.onCommentDeleteClick.bind(this);
+    this.onCommentCancelClick = this.onCommentCancelClick.bind(this);
+
+    this.toggleCommentCreate = this.toggleCommentCreate.bind(this);
+    this.toggleCommentUpdate = this.toggleCommentUpdate.bind(this);
+    this.toggleCommentDelete = this.toggleCommentDelete.bind(this);
+  }
+
+  componentDidMount() {
+    const postId = this.props.match.params.id;
+
+    this.props.getPost(postId);
+    this.props.getComments(postId);
+
+  }
+
+  toggleCommentCreate() {
+    this.state.isCreate
+    ? this.setState({ isCreate: false })
+    : this.setState({ isCreate: true });
+  }
+
+  toggleCommentUpdate(commentItem) {
+    this.state.isUpdate
+    ? this.setState({ isUpdate: false, comment: {} })
+    : this.setState({ isUpdate: true, comment: commentItem });
+  }
+
+  toggleCommentDelete(commentItem) {
+    this.state.isDelete
+    ? this.setState({ isDelete: false, comment: {} })
+    : this.setState({ isDelete: true, comment: commentItem });
+  }
+
+  onPostVoteClick(postId, voteValue) {
+    const voteOption = { option: voteValue };
+    this.props.votePost(postId, voteOption);
+  }
+
+  onPostCancelClick() {
+    this.props.history.goBack();
+  }
+
+  onCommentVoteClick(commentId, voteValue) {
+    const voteOption = { option: voteValue };
+    this.props.voteComment(commentId, voteOption);
+  }
+
+  onCommentCreateClick() {
+    const postId = this.props.match.params.id;
+
+    const commentItem = {
+      id: generateRandom(),
+      body: document.getElementById('comment').value.trim(),
+      author: document.getElementById('author').value.trim(),
+      timestamp: Date.now(),
+      parentId: postId
+    };
+
+    this.props.createComment(commentItem);
+    this.toggleCommentCreate();
+  }
+
+  onCommentUpdateClick(commentId) {
+    const commentItem = {
+      body: document.getElementById('comment').value.trim(),
+      timestamp: Date.now()
+    };
+
+    this.props.updateComment(commentId, commentItem);
+    this.toggleCommentUpdate();
+  }
+
+  onCommentDeleteClick(commentId) {
+    this.props.deleteComment(commentId);
+    this.toggleCommentDelete();
+  }
+
+  onCommentCancelClick() {
+    if (this.state.isCreate) {
+      this.toggleCommentCreate();
+    }
+
+    if (this.state.isUpdate) {
+      this.toggleCommentUpdate();
+    }
+
+    if (this.state.isDelete) {
+      this.toggleCommentDelete();
+    }
   }
 
   render() {
-    if (this.props.isFetching || !this.props.post) {
+    if (this.props.isFetching || Object.keys(this.props.post).length === 0) {
       return <ProgressStatus />;
     }
 
@@ -50,109 +145,106 @@ class PostPage extends React.Component {
 
     return (
       <div className="wrapper top">
+
+        <Modal isOpen={this.state.isCreate}>
+          <CommentForm
+            mode="create"
+            createHandler={this.onCommentCreateClick}
+            cancelHandler={this.onCommentCancelClick}
+          />
+        </Modal>
+
+        <Modal isOpen={this.state.isUpdate}>
+          <CommentForm
+            mode="update"
+            comment={this.state.comment}
+            updateHandler={this.onCommentUpdateClick}
+            cancelHandler={this.onCommentCancelClick}
+          />
+        </Modal>
+
+        <Modal isOpen={this.state.isDelete}>
+          <CommentForm
+            mode="delete"
+            comment={this.state.comment}
+            deleteHandler={this.onCommentDeleteClick}
+            cancelHandler={this.onCommentCancelClick}
+          />
+        </Modal>
+
         <div className="actions">
           <button
             type="button"
-            className="btn btn-primary"
-            onClick={this.onPostEdit}>
-            Edit
-          </button>
-
-          <button
-            type="button"
             className="btn btn-secondary"
-            onClick={this.onPostDelete}>
-            Delete
+            onClick={this.onPostCancelClick}>
+            Cancel
           </button>
         </div>
 
         <PostDetail
           post={this.props.post}
-          voteHandler={this.onPostVote}
+          voteHandler={this.onPostVoteClick}
         />
 
-        <div>
+        <div className="comment-section">
           <div className="actions">
-            <h3><FaComments /> ({this.props.post.commentCount}) comments</h3>
+            <h3>
+              <FaComments />
+              &nbsp;
+              ({this.props.post.commentCount}) comments
+            </h3>
 
+            &nbsp;
             <button
               type="button"
               className="btn btn-primary"
-              onClick={this.toggleAddComment}>
+              onClick={this.toggleCommentCreate}>
               Add
             </button>
           </div>
 
-          {this.state.isAddComment &&
-            <CommentForm
-              createHandler={this.onCommentCreate}
-              cancelHandler={this.toggleAddComment}
-            />
-          }
-
           {this.props.comments.map((comment) => {
             return (
-              <CommentDisplay
-                key={comment.id}
-                comment={comment}
-                voteHandler={this.props.voteComment}
-                updateHandler={this.props.updateComment}
-                deleteHandler={this.props.deleteComment}
-              />
+              <div key={comment.id} className="comment">
+                <div className="comment-meta">
+                  submitted on {dateFormatter(comment.timestamp)} by {comment.author}
+                </div>
+
+                <div className="comment-actions">
+                  votes {comment.voteScore}
+                  &nbsp;
+                    <FaThumbsUp
+                    className="voteUp-icon"
+                    onClick={() => this.onCommentVoteClick(comment.id, 'upVote')}
+                  />
+                  &nbsp;
+                    <FaThumbsDown
+                    className="voteDown-icon"
+                    onClick={() => this.onCommentVoteClick(comment.id, 'downVote')}
+                  />
+
+                  <span className="right">
+                    <FaPencil
+                      className="edit-icon"
+                      onClick={() => this.toggleCommentUpdate(comment)}
+                    />
+                    &nbsp;
+                    <FaTrash
+                      className="edit-icon"
+                      onClick={() => this.toggleCommentDelete(comment)}
+                    />
+                  </span>
+                </div>
+
+                <div className="comment-content">
+                  {comment.body}
+                </div>
+              </div>
             );
           })}
         </div>
       </div>
     );
-  }
-
-  componentDidMount() {
-    const postId = this.props.match.params.id;
-    this.props.getPost(postId);
-    this.props.getComments(postId);
-  }
-
-  onPostVote(postId, voteValue) {
-    const voteOption = { option: voteValue };
-    this.props.votePost(postId, voteOption);
-  }
-
-  onPostDelete(e) {
-    e.preventDefault();
-
-    const postId = this.props.post.id;
-    this.props.deletePost(postId);
-    this.props.history.push('/');
-  }
-
-  onPostEdit(e) {
-    e.preventDefault();
-
-    const postId = this.props.post.id
-    this.props.history.push('/post/edit/' + postId);
-  }
-
-  onCommentCreate(e) {
-    e.preventDefault();
-
-    let commentItem = {
-      id: generateRandom(),
-      body: document.getElementById('commentCreate').value.trim(),
-      timestamp: Date.now(),
-      author: 'Harish Mathanan', // hard-coded value
-      parentId: this.props.post.id
-    };
-
-    this.props.createComment(commentItem);
-    this.toggleAddComment();
-  }
-
-  toggleAddComment() {
-    //e.preventDefault();
-
-    this.state.isAddComment
-      ? this.setState({ isAddComment: false })
-      : this.setState({ isAddComment: true });
   }
 }
 
@@ -161,22 +253,22 @@ PostPage.propTypes = {
   isError: PropTypes.bool,
   message: PropTypes.string,
   post: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    body: PropTypes.string.isRequired,
-    timestamp: PropTypes.number.isRequired,
-    author: PropTypes.string.isRequired,
-    category: PropTypes.string.isRequired,
-    voteScore: PropTypes.number.isRequired,
-    commentCount: PropTypes.number.isRequired,
-    deleted: PropTypes.bool.isRequired
+    id: PropTypes.string,
+    title: PropTypes.string,
+    body: PropTypes.string,
+    timestamp: PropTypes.number,
+    author: PropTypes.string,
+    category: PropTypes.string,
+    voteScore: PropTypes.number,
+    commentCount: PropTypes.number,
+    deleted: PropTypes.bool
   }),
   comments: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
       parentId: PropTypes.string.isRequired,
-      body: PropTypes.string.isRequired,
       timestamp: PropTypes.number.isRequired,
+      body: PropTypes.string.isRequired,
       author: PropTypes.string.isRequired,
       voteScore: PropTypes.number.isRequired,
       deleted: PropTypes.bool.isRequired,
@@ -185,7 +277,6 @@ PostPage.propTypes = {
   ),
   getPost: PropTypes.func,
   votePost: PropTypes.func,
-  deletePost: PropTypes.func,
   getComments: PropTypes.func,
   voteComment: PropTypes.func,
   createComment: PropTypes.func,
@@ -205,14 +296,13 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getPost: bindActionCreators(getPostItem, dispatch),
-    votePost: bindActionCreators(votePostItem, dispatch),
-    deletePost: bindActionCreators(deletePostItem, dispatch),
-    getComments: bindActionCreators(getCommentList, dispatch),
-    voteComment: bindActionCreators(voteCommentItem, dispatch),
-    createComment: bindActionCreators(createCommentItem, dispatch),
-    updateComment: bindActionCreators(updateCommentItem, dispatch),
-    deleteComment: bindActionCreators(deleteCommentItem, dispatch)
+    getPost: bindActionCreators(getPost, dispatch),
+    votePost: bindActionCreators(votePost, dispatch),
+    getComments: bindActionCreators(getAllComments, dispatch),
+    voteComment: bindActionCreators(voteComment, dispatch),
+    createComment: bindActionCreators(createComment, dispatch),
+    updateComment: bindActionCreators(updateComment, dispatch),
+    deleteComment: bindActionCreators(deleteComment, dispatch)
   };
 };
 

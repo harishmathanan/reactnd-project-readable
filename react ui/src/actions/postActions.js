@@ -1,328 +1,205 @@
+import axios from 'axios';
 import { Config } from '../common/config';
-import { generateRandom } from '../common/helpers';
 import {
-  POST_LIST_FETCH, POST_LIST_ERROR, POST_LIST_SUCCESS,
-  POST_CREATE_FETCH, POST_CREATE_ERROR, POST_CREATE_SUCCESS,
-  POST_UPDATE_FETCH, POST_UPDATE_ERROR, POST_UPDATE_SUCCESS,
-  POST_DELETE_FETCH, POST_DELETE_ERROR, POST_DELETE_SUCCESS,
-  POST_ITEM_FETCH, POST_ITEM_ERROR, POST_ITEM_SUCCESS,
-  POST_VOTE_FETCH, POST_VOTE_ERROR, POST_VOTE_SUCCESS
+  POST_FETCH,
+  POST_ERROR,
+  POST_LIST,
+  POST_ITEM,
+  POST_VOTE,
+  POST_CREATE,
+  POST_UPDATE,
+  POST_DELETE
 } from './types';
 
-const postListFetch = () => {
+
+const postFetchAction = () => {
   return {
-    type: POST_LIST_FETCH
+    type: POST_FETCH
   };
 };
 
-const postListError = (error) => {
+const postErrorAction = (error) => {
   return {
-    type: POST_LIST_ERROR,
+    type: POST_ERROR,
     error
   };
 };
 
-const postListSuccess = (data) => {
+const postListAction = (data) => {
   return {
-    type: POST_LIST_SUCCESS,
+    type: POST_LIST,
     data
   };
 };
 
-/**
- * GET /posts
- */
-export const getPostList = () => {
-  let request = new Request(Config.serverUrl + '/posts', {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/json',
-      'Authorization': generateRandom()
-    }
-  });
-
-  return (dispatch) => {
-    dispatch(postListFetch());
-
-    fetch(request)
-      .then((response) => response.json())
-      .then((data) => {
-        dispatch(postListSuccess(data));
-      })
-      .catch((error) => {
-        dispatch(postListError(error.name + ' - ' + error.message));
-      });
-  };
-};
-
-/**
- * GET /:category/posts
- * @param {string} category
- */
-export const getPostListByCategory = (category) => {
-  let request = new Request(`${Config.serverUrl}/${category}/posts`, {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/json',
-      'Authorization': generateRandom()
-    }
-  });
-
-  return (dispatch) => {
-    dispatch(postListFetch());
-
-    fetch(request)
-      .then((response) => response.json())
-      .then((data) => {
-        dispatch(postListSuccess(data));
-      })
-      .catch((error) => {
-        dispatch(postListError(error.name + ' - ' + error.message));
-      });
-  };
-};
-
-
-const postCreateFetch = () => {
+const postItemAction = (data) => {
   return {
-    type: POST_CREATE_FETCH
-  };
-};
-
-const postCreateError = (error) => {
-  return {
-    type: POST_CREATE_ERROR,
-    error
-  };
-};
-
-const postCreateSuccess = (data) => {
-  return {
-    type: POST_CREATE_SUCCESS,
+    type: POST_ITEM,
     data
   };
 };
 
-/**
- * POST /post
- * @param {object} post
- */
-export const createPostItem = (post) => {
-  let request = new Request(`${Config.serverUrl}/posts`, {
-    method: 'POST',
-    body: JSON.stringify(post),
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'Authorization': generateRandom()
-    }
-  });
-
-  return (dispatch) => {
-    dispatch(postCreateFetch());
-
-    fetch(request)
-      .then((response) => response.json())
-      .then((data) => {
-        dispatch(postCreateSuccess(data));
-      })
-      .catch((error) => {
-        dispatch(postCreateError(error.name + ' - ' + error.message));
-      });
-  };
-};
-
-export const postUpdateFetch = () => {
+const postVoteAction = (data) => {
   return {
-    type: POST_UPDATE_FETCH
-  };
-};
-
-export const postUpdateError = (error) => {
-  return {
-    type: POST_UPDATE_ERROR,
-    error
-  };
-};
-
-export const postUpdateSuccess = (data) => {
-  return {
-    type: POST_UPDATE_SUCCESS,
+    type: POST_VOTE,
     data
   };
 };
 
-/**
- * PUT /posts/:id
- * @param {string} postId
- * @param {object} post
- */
-export const updatePostItem = (postId, post) => {
-  let request = new Request(`${Config.serverUrl}/posts/${postId}`, {
-    method: 'PUT',
-    body: JSON.stringify(post),
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'Authorization': generateRandom()
-    }
-  });
-
-  return (dispatch) => {
-    dispatch(postUpdateFetch());
-
-    fetch(request)
-      .then((response) => response.json())
-      .then((data) => {
-        dispatch(postUpdateSuccess(data));
-      })
-      .catch((error) => {
-        dispatch(postUpdateError(error.name + ' - ' + error.message));
-      });
-  };
-};
-
-export const postDeleteFetch = () => {
+const postCreateAction = (data) => {
   return {
-    type: POST_DELETE_FETCH
-  };
-};
-
-export const postDeleteError = (error) => {
-  return {
-    type: POST_DELETE_ERROR,
-    error
-  };
-};
-
-export const postDeleteSuccess = (data) => {
-  return {
-    type: POST_DELETE_SUCCESS,
+    type: POST_CREATE,
     data
   };
 };
 
-/**
- * DELETE /posts/:id
- * @param {string} postId
- */
-export const deletePostItem = (postId) => {
-  let request = new Request(`${Config.serverUrl}/posts/${postId}`, {
-    method: 'DELETE',
-    headers: {
-      'Accept': 'application/json',
-      'Authorization': generateRandom()
-    }
-  });
+const postUpdateAction = (data) => {
+  return {
+    type: POST_UPDATE,
+    data
+  };
+}
 
+const postDeleteAction = (data) => {
+  return {
+    type: POST_DELETE,
+    data
+  };
+};
+
+export const getAllPosts = () => {
   return (dispatch) => {
-    dispatch(postDeleteFetch());
+    dispatch(postFetchAction());
 
-    fetch(request)
-    .then((response) => response.json())
-    .then((data) => {
-      dispatch(postDeleteSuccess(data));
+    axios.get(`${Config.serverURL}/posts`, {
+      headers: {
+        'accept': 'application/json',
+        'authorization': 'randomstring'
+      }
+    })
+    .then((response) => {
+      dispatch(postListAction(response.data))
     })
     .catch((error) => {
-      dispatch(postDeleteError(error.name + ' - ' + error.message));
+      dispatch(postErrorAction(error.message))
     });
   };
 };
 
-export const postItemFetch = () => {
-  return {
-    type: POST_ITEM_FETCH
-  };
-};
-
-export const postItemError = (error) => {
-  return {
-    type: POST_ITEM_ERROR,
-    error
-  };
-};
-
-export const postItemSuccess = (data) => {
-  return {
-    type: POST_ITEM_SUCCESS,
-    data
-  };
-};
-
-/**
- * GET /posts/:id
- * @param {string} postId
- */
-export const getPostItem = (postId) => {
-  let request = new Request(`${Config.serverUrl}/posts/${postId}`, {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/json',
-      'Authorization': generateRandom()
-    }
-  });
-
+export const getPostsByCategory = (category) => {
   return (dispatch) => {
-    dispatch(postItemFetch());
+    dispatch(postFetchAction());
 
-    fetch(request)
-      .then((response) => response.json())
-      .then((data) => {
-        dispatch(postItemSuccess(data));
-      })
-      .catch((error) => {
-        dispatch(postItemError(error.name + ' - ' + error.message));
-      });
-  };
-};
-
-export const postVoteFetch = () => {
-  return {
-    type: POST_VOTE_FETCH
-  };
-};
-
-export const postVoteError = (error) => {
-  return {
-    type: POST_VOTE_ERROR,
-    error
-  };
-};
-
-export const postVoteSuccess = (data) => {
-  return {
-    type: POST_VOTE_SUCCESS,
-    data
-  };
-};
-
-/**
- * POST /posts/:id
- * @param {string} postId
- * @param {object} voteOption { option: 'upVote' or 'downVote' }
- */
-export const votePostItem = (postId, voteOption) => {
-  let request = new Request(`${Config.serverUrl}/posts/${postId}`, {
-    method: 'POST',
-    body: JSON.stringify(voteOption),
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'Authorization': generateRandom()
-    }
-  });
-
-  return (dispatch) => {
-    dispatch(postVoteFetch());
-
-    fetch(request)
-    .then((response) => response.json())
-    .then((data) => {
-      dispatch(postVoteSuccess(data));
+    axios.get(`${Config.serverURL}/${category}/posts`, {
+      headers: {
+        'accept': 'application/json',
+        'authorization': 'randomstring'
+      }
+    })
+    .then((response) => {
+      dispatch(postListAction(response.data))
     })
     .catch((error) => {
-      dispatch(postVoteError(error.name + ' - ' + error.message));
+      dispatch(postErrorAction(error.message))
     });
   };
 };
 
+export const getPost = (postId) => {
+  return (dispatch) => {
+    dispatch(postFetchAction());
+
+    axios.get(`${Config.serverURL}/posts/${postId}`, {
+      headers: {
+        'accept': 'application/json',
+        'authorization': 'randomstring'
+      }
+    })
+    .then((response) => {
+      dispatch(postItemAction(response.data))
+    })
+    .catch((error) => {
+      dispatch(postErrorAction(error.message))
+    });
+  };
+}
+
+export const votePost = (postId, voteOption) => {
+  return (dispatch) => {
+    dispatch(postFetchAction());
+
+    axios.post(`${Config.serverURL}/posts/${postId}`, JSON.stringify(voteOption), {
+      headers: {
+        'accept': 'application/json',
+        'authorization': 'randomstring',
+        'content-type': 'application/json'
+      }
+    })
+    .then((response) => {
+      dispatch(postVoteAction(response.data));
+    })
+    .catch((error) => {
+      dispatch(postErrorAction(error.message));
+    });
+  };
+};
+
+export const createPost = (postItem) => {
+  return (dispatch) => {
+    dispatch(postFetchAction());
+
+    axios.post(`${Config.serverURL}/posts`, JSON.stringify(postItem), {
+      headers: {
+        'accept': 'application/json',
+        'authorization': 'randomstring',
+        'content-type': 'application/json'
+      }
+    })
+    .then((response) => {
+      dispatch(postCreateAction(response.data));
+    })
+    .catch((error) => {
+      dispatch(postErrorAction(error.message));
+    });
+  };
+};
+
+export const updatePost = (postId, postItem) => {
+  return (dispatch) => {
+    dispatch(postFetchAction());
+
+    axios.put(`${Config.serverURL}/posts/${postId}`, JSON.stringify(postItem), {
+      headers: {
+        'accept': 'application/json',
+        'authorization': 'randomstring',
+        'content-type': 'application/json'
+      }
+    })
+    .then((response) => {
+      dispatch(postUpdateAction(response.data));
+    })
+    .catch((error) => {
+      dispatch(postErrorAction(error.message));
+    });
+  };
+};
+
+export const deletePost = (postId) => {
+  return (dispatch) => {
+    dispatch(postFetchAction());
+
+    axios.delete(`${Config.serverURL}/posts/${postId}`, {
+      headers: {
+        'accept': 'application/json',
+        'authorization': 'randomstring',
+        'content-type': 'application/json'
+      }
+    })
+    .then((response) => {
+      dispatch(postDeleteAction(response.data));
+    })
+    .catch((error) => {
+      dispatch(postErrorAction(error.message));
+    });
+  };
+};

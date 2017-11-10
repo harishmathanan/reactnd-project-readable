@@ -1,49 +1,49 @@
+import axios from 'axios';
 import { Config } from '../common/config';
 import { generateRandom } from '../common/helpers';
+import {
+  CATEGORY_FETCH,
+  CATEGORY_ERROR,
+  CATEGORY_LIST
+} from './types';
 
-export const CATEGORY_FETCH_ACTION = 'CATEGORY_FETCH_ACTION';
-export const CATEGORY_ERROR_ACTION = 'CATEGORY_ERROR_ACTION';
-export const CATEGORY_LIST_SUCCESS_ACTION = 'CATEGORY_LIST_SUCCESS_ACTION';
 
-const categoryFetch = () => {
+const categoryFetchAction = () => {
   return {
-    type: CATEGORY_FETCH_ACTION
+    type: CATEGORY_FETCH
   };
 };
 
-const categoryError = (error) => {
+const categoryErrorAction = (error) => {
   return {
-    type: CATEGORY_ERROR_ACTION,
+    type: CATEGORY_ERROR,
     error
   };
 };
 
-const categoryListSuccess = (data) => {
+const categoryListAction = (data) => {
   return {
-    type: CATEGORY_LIST_SUCCESS_ACTION,
+    type: CATEGORY_LIST,
     data
   };
 };
 
-export const getCategoryList = () => {
-  let request = new Request(Config.serverUrl + '/categories', {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/json',
-      'Authorization': generateRandom()
-    }
-  });
-
+export const getAllCategories = () => {
   return (dispatch) => {
-    dispatch(categoryFetch());
+      dispatch(categoryFetchAction());
 
-    fetch(request)
-    .then((response) => response.json())
-    .then((data) => {
-      dispatch(categoryListSuccess(data));
-    })
-    .catch((error) => {
-      dispatch(categoryError(error.name + ' - ' + error.message));
-    });
+
+      axios.get(`${Config.serverURL}/categories`, {
+        headers: {
+          'accept': 'application/json',
+          'authorization': generateRandom()
+        }
+      })
+      .then((response) => {
+        dispatch(categoryListAction(response.data));
+      })
+      .catch((error) => {
+        dispatch(categoryErrorAction(error.message));
+      });
   };
 };

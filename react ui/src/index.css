@@ -63,6 +63,14 @@ label, input, select, textarea {
   margin-bottom: 1.625em; /* spacing */
 }
 
+.right {
+  float: right;
+}
+
+.left {
+  float: left;
+}
+
 .loader {
   display: inline-block;
 }
@@ -124,6 +132,8 @@ label, input, select, textarea {
 }
 
 .post, .comment {
+  padding-right: 0.937em;
+  padding-left: 0.937em;
   padding-bottom: 1em;
   margin-bottom: 2em;
   border-bottom: 1px solid #c8c8c8;
@@ -133,27 +143,20 @@ label, input, select, textarea {
   margin-bottom: 0.375em;
 }
 
-.post-meta {
+.post-meta, .comment-meta {
   font-size: 0.875em;
   color: #a6a6a6;
+}
+
+.post-actions, .comment-actions {
+  font-size: 0.875em;
+  color: #a6a6a6;
+  margin-bottom: 1em;
 }
 
 .post-votes {
   font-size: 0.875em;
   color: #a6a6a6;
-}
-
-.comment-meta {
-  font-size: 0.875em;
-  color: #a6a6a6;
-}
-
-.meta-icon {
-  padding: 0em 0.375em;
-}
-
-.meta-icon:hover {
-  cursor: pointer;
 }
 
 .post-footer {
@@ -173,22 +176,6 @@ label, input, select, textarea {
   padding: 0em 0.375em;
 }
 
-.comment-vote-icon {
-  padding: 0 0.5em;
-}
-
-.vote-up:hover {
-  color: #107c10;
-}
-
-.vote-down:hover {
-  color: #a80000;
-}
-
-.post-vote-icon:hover {
-  cursor: pointer;
-}
-
 .post-content, .comment-content {
   font-weight: 300;
   line-height: 1.5;
@@ -199,6 +186,7 @@ label, input, select, textarea {
   text-align: left;
 }
 
+/* ACTIONS */
 .actions {
   text-align: right;
   font-weight: 100;
@@ -213,6 +201,7 @@ label, input, select, textarea {
   margin: 0;
 }
 
+/* BUTTONS AND LINKS */
 .btn, .lnk {
   font-family: inherit;
   font-weight: 400;
@@ -255,6 +244,7 @@ label, input, select, textarea {
   transition: all .5s;
 }
 
+/* FORM CONTROLS */
 .control-group {
   padding-right: 1.5em;
   padding-left: 0.5em;
@@ -273,6 +263,33 @@ label, input, select, textarea {
   border: 1px solid #c8c8c8;
 }
 
+/* MODAL */
+.modal-content {
+  margin-right: auto;
+  margin-left: auto;
+  max-width: 768px;
+}
+
+/* ICONS */
+.voteUp-icon:hover {
+  color: #107c10;
+  cursor: pointer;
+}
+
+.voteDown-icon:hover {
+  color: #a80000;
+  cursor: pointer;
+}
+
+.edit-icon:hover {
+  color: #ea4300;
+  cursor: pointer;
+}
+
+.delete-icon:hover {
+  color: #e81123;
+  cursor: pointer;
+}
 
 /* Mobile First */
 

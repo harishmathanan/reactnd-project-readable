@@ -17,10 +17,11 @@ const App = () => {
       <div className="content">
         <Switch>
           <Route exact path="/" component={HomePage} />
-          <Route path="/post/edit/:id" component={FormPage} />
-          <Route path="/post/create" component={FormPage} />
+          <Route path="/delete/:id" component={FormPage} />
+          <Route path="/edit/:id" component={FormPage} />
+          <Route path="/new" component={FormPage} />
           <Route path="/post/:id" component={PostPage} />
-          <Route path="/category/:category" component={CategoryPage} />
+          <Route path='/:category' component={CategoryPage} />
           <Route component={NotFoundPage} />
         </Switch>
       </div>

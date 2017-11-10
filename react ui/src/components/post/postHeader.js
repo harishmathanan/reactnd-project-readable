@@ -6,7 +6,7 @@ const PostHeader = (props) => {
   return (
     <div className="post-header">
       <h3>
-        <NavLink to={'/post/' + props.id}>
+        <NavLink to={`/post/${props.id}`}>
           {props.title}
         </NavLink>
       </h3>

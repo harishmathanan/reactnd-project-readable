@@ -7,7 +7,7 @@ import CategorySelect from '../category/categorySelect';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { getCategoryList } from '../../actions/categoryActions';
+import { getAllCategories } from '../../actions/categoryActions';
 
 class Sidebar extends React.Component {
   render() {
@@ -32,18 +32,18 @@ class Sidebar extends React.Component {
         </div>
 
         <CategorySelect
-          categories={this.props.categoryList}
+          categories={this.props.categories}
         />
 
         <CategoryList
-          categories={this.props.categoryList}
+          categories={this.props.categories}
         />
       </div>
     );
   }
 
   componentDidMount() {
-    if (this.props.categoryList.length === 0) {
+    if (this.props.categories.length === 0) {
       this.props.getCategories();
     }
   }
@@ -53,7 +53,7 @@ Sidebar.propTypes = {
   isFetching: PropTypes.bool.isRequired,
   isError: PropTypes.bool.isRequired,
   message: PropTypes.string,
-  categoryList: PropTypes.arrayOf(
+  categories: PropTypes.arrayOf(
     PropTypes.shape({
       name: PropTypes.string.isRequired,
       path: PropTypes.string.isRequired
@@ -67,13 +67,13 @@ const mapStateToProps = (state) => {
     isFetching: state.category.isFetching,
     isError: state.category.isError,
     message: state.category.message,
-    categoryList: state.category.categoryList
+    categories: state.category.categories
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getCategories: bindActionCreators(getCategoryList, dispatch)
+    getCategories: bindActionCreators(getAllCategories, dispatch)
   };
 };
 

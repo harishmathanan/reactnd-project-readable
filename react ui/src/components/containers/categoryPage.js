@@ -6,7 +6,7 @@ import ProgressStatus from '../shared/progressStatus';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { getPostListByCategory, votePostItem } from '../../actions/postActions';
+import { getPostsByCategory, votePost } from '../../actions/postActions';
 
 class CategoryPage extends React.Component {
   constructor() {
@@ -17,65 +17,12 @@ class CategoryPage extends React.Component {
       posts: []
     };
 
-    this.onPostVote = this.onPostVote.bind(this);
+    this.onVoteClick = this.onVoteClick.bind(this);
     this.onSortChange = this.onSortChange.bind(this);
     this.sortByDescending = this.sortByDescending.bind(this);
   }
 
-  render() {
-    if (this.props.isFetching) {
-      return <ProgressStatus />;
-    }
-
-    if (this.props.isError) {
-      return <ErrorStatus message={this.props.message} />;
-    }
-
-    return (
-      <div className="wrapper top">
-
-        <div className="actions">
-
-          <div className="left">
-            <label htmlFor="sort">Sort By</label>
-            &nbsp;
-            <select id="sort" name="sort" onChange={this.onSortChange}>
-              <option value="voteScore">vote</option>
-              <option value="timestamp">date</option>
-            </select>
-          </div>
-
-          <div className="right">
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={() => this.props.history.push('/post/create')}>
-              Create
-            </button>
-          </div>
-
-          <div className="clearfix"></div>
-        </div>
-
-        {this.state.posts.map((post) => {
-          return (
-            <PostDisplay
-              key={post.id}
-              post={post}
-              voteHandler={this.onPostVote}
-            />
-          );
-        })}
-      </div>
-    );
-  }
-
   componentDidMount() {
-    // this line is important, it is used
-    // to let the component know that an action
-    // from a different route has already been dispatched.
-    if (this.props.isFetching) { return; }
-
     const category = this.props.match.params.category;
     this.props.getPostsByCategory(category);
   }
@@ -87,7 +34,7 @@ class CategoryPage extends React.Component {
     this.setState({ posts: sortedPosts });
   }
 
-  onPostVote(postId, voteValue) {
+  onVoteClick(postId, voteValue) {
     const voteOption = { option: voteValue };
     this.props.votePost(postId, voteOption);
   }
@@ -105,6 +52,47 @@ class CategoryPage extends React.Component {
     return array.sort((x, y) => {
       return y[propertyName] - x[propertyName];
     });
+  }
+
+  render() {
+    if (this.props.isFetching) {
+      return <ProgressStatus />;
+    }
+
+    if (this.props.isError) {
+      return <ErrorStatus message={this.props.message} />;
+    }
+
+    return (
+      <div className="wrapper top">
+
+        <div className="actions">
+          <label htmlFor="sort">Sort By</label>
+          &nbsp;
+            <select id="sort" name="sort" onChange={this.onSortChange}>
+            <option value="voteScore">vote</option>
+            <option value="timestamp">date</option>
+          </select>
+          &nbsp;
+            <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => this.props.history.push('/post/create')}>
+            Create
+            </button>
+        </div>
+
+        {this.state.posts.map((post) => {
+          return (
+            <PostDisplay
+              key={post.id}
+              post={post}
+              voteHandler={this.onVoteClick}
+            />
+          );
+        })}
+      </div>
+    );
   }
 }
 
@@ -128,8 +116,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getPostsByCategory: bindActionCreators(getPostListByCategory, dispatch),
-    votePost: bindActionCreators(votePostItem, dispatch)
+    getPostsByCategory: bindActionCreators(getPostsByCategory, dispatch),
+    votePost: bindActionCreators(votePost, dispatch)
   };
 };
 

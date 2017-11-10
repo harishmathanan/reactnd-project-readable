@@ -1,9 +1,11 @@
 import {
-  COMMENT_LIST_FETCH, COMMENT_LIST_ERROR, COMMENT_LIST_SUCCESS,
-  COMMENT_CREATE_FETCH, COMMENT_CREATE_ERROR, COMMENT_CREATE_SUCCESS,
-  COMMENT_UPDATE_FETCH, COMMENT_UPDATE_ERROR, COMMENT_UPDATE_SUCCESS,
-  COMMENT_DELETE_FETCH, COMMENT_DELETE_ERROR, COMMENT_DELETE_SUCCESS,
-  COMMENT_VOTE_FETCH, COMMENT_VOTE_ERROR, COMMENT_VOTE_SUCCESS
+  COMMENT_FETCH,
+  COMMENT_ERROR,
+  COMMENT_LIST,
+  COMMENT_VOTE,
+  COMMENT_CREATE,
+  COMMENT_UPDATE,
+  COMMENT_DELETE
 } from '../actions/types';
 
 const initialState = {
@@ -15,22 +17,15 @@ const initialState = {
 
 export const commentReducer = (state = initialState, action) => {
   switch (action.type) {
-    case COMMENT_LIST_FETCH:
-    case COMMENT_VOTE_FETCH:
-    case COMMENT_CREATE_FETCH:
-    case COMMENT_UPDATE_FETCH:
-    case COMMENT_DELETE_FETCH:
+
+    case COMMENT_FETCH:
       return {
         ...state,
         isFetching: true,
         isError: false
       };
 
-    case COMMENT_LIST_ERROR:
-    case COMMENT_VOTE_ERROR:
-    case COMMENT_CREATE_ERROR:
-    case COMMENT_UPDATE_ERROR:
-    case COMMENT_DELETE_ERROR:
+    case COMMENT_ERROR:
       return {
         ...state,
         isFetching: false,
@@ -38,7 +33,7 @@ export const commentReducer = (state = initialState, action) => {
         message: action.error
       };
 
-    case COMMENT_LIST_SUCCESS:
+    case COMMENT_LIST:
       return {
         ...state,
         isFetching: false,
@@ -46,15 +41,7 @@ export const commentReducer = (state = initialState, action) => {
         comments: action.data
       };
 
-    case COMMENT_CREATE_SUCCESS:
-      return {
-        ...state,
-        isFetching: false,
-        isError: false,
-        comments: [...state.comments, action.data]
-      };
-
-    case COMMENT_UPDATE_SUCCESS:
+    case COMMENT_VOTE:
       return {
         ...state,
         isFetching: false,
@@ -68,7 +55,18 @@ export const commentReducer = (state = initialState, action) => {
         })
       };
 
-    case COMMENT_VOTE_SUCCESS:
+    case COMMENT_CREATE:
+      return {
+        ...state,
+        isFetching: false,
+        isError: false,
+        comments: [
+          ...state.comments,
+          action.data
+        ]
+      };
+
+    case COMMENT_UPDATE:
       return {
         ...state,
         isFetching: false,
@@ -82,7 +80,7 @@ export const commentReducer = (state = initialState, action) => {
         })
       };
 
-    case COMMENT_DELETE_SUCCESS:
+    case COMMENT_DELETE:
       return {
         ...state,
         isFetching: false,
@@ -90,7 +88,7 @@ export const commentReducer = (state = initialState, action) => {
         comments: state.comments.filter((comment) => {
           return (comment.id !== action.data.id);
         })
-      };
+      }
 
     default:
       return state;
