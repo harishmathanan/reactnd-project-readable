@@ -8,7 +8,7 @@ const CategoryList = (props) => {
         {props.categories.map((category) => {
           return (
             <li key={category.name} className="nav-item">
-              <a href={`/${category.path}`}>
+              <a href={`/category/${category.path}`}>
                 {category.name}
               </a>
             </li>

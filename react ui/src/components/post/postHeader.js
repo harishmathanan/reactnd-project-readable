@@ -6,7 +6,7 @@ const PostHeader = (props) => {
   return (
     <div className="post-header">
       <h3>
-        <NavLink to={`/post/${props.id}`}>
+        <NavLink to={`/${props.category}/${props.id}`}>
           {props.title}
         </NavLink>
       </h3>
@@ -16,7 +16,8 @@ const PostHeader = (props) => {
 
 PostHeader.propTypes = {
   id: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired
+  title: PropTypes.string.isRequired,
+  category: PropTypes.string.isRequired,
 };
 
 export default PostHeader;

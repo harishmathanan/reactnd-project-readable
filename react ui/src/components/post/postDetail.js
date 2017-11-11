@@ -6,29 +6,32 @@ import PostContent from './postContent';
 import PostActions from './postActions';
 
 const PostDetail = (props) => {
+  const post = props.post;
+
   return (
     <div className="post">
       <PostHeader
-        id={props.post.id}
-        title={props.post.title}
+        id={post.id}
+        title={post.title}
+        category={post.category}
       />
 
       <PostMeta
-        timestamp={props.post.timestamp}
-        author={props.post.author}
-        category={props.post.category}
+        timestamp={post.timestamp}
+        author={post.author}
+        category={post.category}
       />
 
       <PostActions
-        id={props.post.id}
-        votes={props.post.voteScore}
+        id={post.id}
+        votes={post.voteScore}
         voteHandler={props.voteHandler}
       />
 
       <PostContent
         isSummary={false}
-        id={props.post.id}
-        body={props.post.body}
+        id={post.id}
+        body={post.body}
       />
     </div>
   );
@@ -45,7 +48,7 @@ PostDetail.propTypes = {
     voteScore: PropTypes.number.isRequired,
     commentCount: PropTypes.number.isRequired,
     deleted: PropTypes.bool.isRequired
-  }),
+  }).isRequired,
   voteHandler: PropTypes.func.isRequired
 };
 

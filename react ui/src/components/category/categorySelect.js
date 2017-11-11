@@ -8,7 +8,7 @@ const CategorySelect = (props) => {
         <option value="/">Home</option>
         {props.categories.map((category) => {
           return (
-            <option key={category.name} value={category.path}>
+            <option key={category.name} value={`/category/${category.path}`}>
               {category.name}
             </option>
           );
