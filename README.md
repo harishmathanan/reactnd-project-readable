@@ -14,6 +14,7 @@ Additional dependencies are as below:
 * react-redux
 * react-icons
 * react-loading
+* react-modal
 * react-router-dom
 
 ## usage

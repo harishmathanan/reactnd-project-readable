@@ -13,8 +13,7 @@ class CategoryPage extends React.Component {
     super();
 
     this.state = {
-      sortBy: 'voteScore', // either 'voteScore' or 'timestamp'
-      posts: []
+      sortBy: 'voteScore' // either 'voteScore' or 'timestamp'
     };
 
     this.onVoteClick = this.onVoteClick.bind(this);
@@ -27,13 +26,6 @@ class CategoryPage extends React.Component {
     this.props.getPostsByCategory(category);
   }
 
-  componentWillReceiveProps(newProps) {
-    if (!newProps.posts) { return; }
-
-    const sortedPosts = this.sortByDescending(newProps.posts, this.state.sortBy);
-    this.setState({ posts: sortedPosts });
-  }
-
   onVoteClick(postId, voteValue) {
     const voteOption = { option: voteValue };
     this.props.votePost(postId, voteOption);
@@ -43,9 +35,7 @@ class CategoryPage extends React.Component {
     e.preventDefault();
 
     const sortValue = e.target.value;
-    const sortedPosts = this.sortByDescending(this.state.posts, sortValue);
-
-    this.setState({ posts: sortedPosts, sortBy: sortValue });
+    this.setState({ sortBy: sortValue });
   }
 
   sortByDescending(array, propertyName) {
@@ -55,6 +45,11 @@ class CategoryPage extends React.Component {
   }
 
   render() {
+    const sortedPosts = this.sortByDescending(
+      this.props.posts,
+      this.state.sortBy
+    );
+
     if (this.props.isFetching) {
       return <ProgressStatus />;
     }
@@ -82,7 +77,7 @@ class CategoryPage extends React.Component {
             </button>
         </div>
 
-        {this.state.posts.map((post) => {
+        {sortedPosts.map((post) => {
           return (
             <PostDisplay
               key={post.id}
