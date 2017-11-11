@@ -154,6 +154,10 @@ label, input, select, textarea {
   margin-bottom: 1em;
 }
 
+.post-actions a, .comment-actions a {
+  color: #a6a6a6;
+}
+
 .post-votes {
   font-size: 0.875em;
   color: #a6a6a6;
@@ -271,6 +275,11 @@ label, input, select, textarea {
 }
 
 /* ICONS */
+.voteUp-icon, .voteDown-icon, .edit-icon, .delete-icon {
+  padding-right: 0.187em;
+  padding-left: 0.187em;
+}
+
 .voteUp-icon:hover {
   color: #107c10;
   cursor: pointer;

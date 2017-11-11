@@ -16,7 +16,6 @@ const PostActions = (props) => {
           className="voteUp-icon"
           onClick={() => props.voteHandler(props.id, 'upVote')}
         />
-        &nbsp;
         <FaThumbsDown
           className="voteDown-icon"
           onClick={() => props.voteHandler(props.id, 'downVote')}
@@ -27,8 +26,6 @@ const PostActions = (props) => {
         <NavLink to={`/edit/${props.id}`}>
           <FaPencil className="edit-icon" />
         </NavLink>
-
-        &nbsp;
 
         <NavLink to={`/delete/${props.id}`}>
           <FaTrash className="delete-icon" />

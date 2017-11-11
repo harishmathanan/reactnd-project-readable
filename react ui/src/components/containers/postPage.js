@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Modal from 'react-modal';
 import PostDetail from '../post/postDetail';
+import Comment from '../comment/comment';
 import CommentForm from '../comment/commentForm';
 import ErrorStatus from '../shared/errorStatus';
 import ProgressStatus from '../shared/progressStatus';
@@ -9,6 +10,7 @@ import FaComments from 'react-icons/lib/fa/comments';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { generateRandom } from '../../common/helpers';
 import { getPost, votePost } from '../../actions/postActions';
 import {
   getAllComments,
@@ -17,12 +19,6 @@ import {
   updateComment,
   deleteComment
 } from '../../actions/commentActions';
-
-import { dateFormatter, generateRandom } from '../../common/helpers';
-import FaTrash from 'react-icons/lib/fa/trash';
-import FaPencil from 'react-icons/lib/fa/pencil';
-import FaThumbsUp from 'react-icons/lib/fa/thumbs-up';
-import FaThumbsDown from 'react-icons/lib/fa/thumbs-down';
 
 
 class PostPage extends React.Component {
@@ -205,41 +201,13 @@ class PostPage extends React.Component {
 
           {this.props.comments.map((comment) => {
             return (
-              <div key={comment.id} className="comment">
-                <div className="comment-meta">
-                  submitted on {dateFormatter(comment.timestamp)} by {comment.author}
-                </div>
-
-                <div className="comment-actions">
-                  votes {comment.voteScore}
-                  &nbsp;
-                    <FaThumbsUp
-                    className="voteUp-icon"
-                    onClick={() => this.onCommentVoteClick(comment.id, 'upVote')}
-                  />
-                  &nbsp;
-                    <FaThumbsDown
-                    className="voteDown-icon"
-                    onClick={() => this.onCommentVoteClick(comment.id, 'downVote')}
-                  />
-
-                  <span className="right">
-                    <FaPencil
-                      className="edit-icon"
-                      onClick={() => this.toggleCommentUpdate(comment)}
-                    />
-                    &nbsp;
-                    <FaTrash
-                      className="edit-icon"
-                      onClick={() => this.toggleCommentDelete(comment)}
-                    />
-                  </span>
-                </div>
-
-                <div className="comment-content">
-                  {comment.body}
-                </div>
-              </div>
+              <Comment
+                key={comment.id}
+                comment={comment}
+                voteHandler={this.onCommentVoteClick}
+                toggleUpdate={this.toggleCommentUpdate}
+                toggleDelete={this.toggleCommentDelete}
+              />
             );
           })}
         </div>
